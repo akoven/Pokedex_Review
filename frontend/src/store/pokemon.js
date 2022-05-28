@@ -1,8 +1,11 @@
 import { LOAD_ITEMS, REMOVE_ITEM, ADD_ITEM } from './items';
+// import { useParams } from 'react-router-dom';
 
 const LOAD = 'pokemon/LOAD';
 const LOAD_TYPES = 'pokemon/LOAD_TYPES';
 const ADD_ONE = 'pokemon/ADD_ONE';
+
+
 
 const load = list => ({
   type: LOAD,
@@ -37,6 +40,15 @@ export const getPokemonTypes = () => async dispatch => {
   }
 };
 
+export const singlePokeDetails = id =>  async dispatch => {
+
+  const response = await fetch(`/api/pokemon/${id}`);
+  if(response.ok){
+    const pokemon = await response.json();
+    dispatch(addOnePokemon(pokemon));
+  }
+
+}
 const initialState = {
   list: [],
   types: []
@@ -50,7 +62,7 @@ const sortList = (list) => {
 
 const pokemonReducer = (state = initialState, action) => {
   switch (action.type) {
-    case LOAD: 
+    case LOAD:
       const allPokemon = {};
       action.list.forEach(pokemon => {
         allPokemon[pokemon.id] = pokemon;
@@ -60,12 +72,12 @@ const pokemonReducer = (state = initialState, action) => {
         ...state,
         list: sortList(action.list)
       };
-    case LOAD_TYPES: 
+    case LOAD_TYPES:
       return {
         ...state,
         types: action.types
       };
-    case ADD_ONE: 
+    case ADD_ONE:
       if (!state[action.pokemon.id]) {
         const newState = {
           ...state,
@@ -83,7 +95,7 @@ const pokemonReducer = (state = initialState, action) => {
           ...action.pokemon
         }
       };
-    case LOAD_ITEMS: 
+    case LOAD_ITEMS:
       return {
         ...state,
         [action.pokemonId]: {
